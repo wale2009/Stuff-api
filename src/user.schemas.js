@@ -27,7 +27,12 @@ export const addUser = {
   schema: {
     body: {
       yupSchema: yup.object().shape({
-        name: yup.string().min(MIN_LENGTH.name).max(MAX_LENGTH.name).required(),
+        // name: yup.string().min(MIN_LENGTH.name).max(MAX_LENGTH.name).required(),
+        name: yup
+          .string()
+          .min(MIN_LENGTH.name, "Name too short")
+          .max(MAX_LENGTH.name, "Name too long")
+          .required("Name is required"),
         email: yup.string().email().max(MAX_LENGTH.email).required(),
         city: yup.string().min(MIN_LENGTH.city).max(MAX_LENGTH.city).required(),
         country: yup
@@ -49,7 +54,12 @@ export const updateUser = {
     },
     body: {
       yupSchema: yup.object().shape({
-        name: yup.string().min(MIN_LENGTH.name).max(MAX_LENGTH.name).required(),
+        // name: yup.string().min(MIN_LENGTH.name).max(MAX_LENGTH.name).required(),
+        name: yup
+          .string()
+          .min(MIN_LENGTH.name, "Name too short")
+          .max(MAX_LENGTH.name, "Name too long")
+          .required("Name is required"),
         email: yup.string().email().max(MAX_LENGTH.email).required(),
         city: yup.string().min(MIN_LENGTH.city).max(MAX_LENGTH.city).required(),
         country: yup
