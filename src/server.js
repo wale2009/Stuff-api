@@ -23,38 +23,62 @@ const swaggerOptions = {
     },
     servers: [
       {
+        url: "https://stuff-api.vercel.app/v1",
+        description: "Production server",
+      },
+      {
         url: `http://localhost:${PORT}/v1`,
         description: "Development server",
       },
     ],
   },
-  apis: ["./src/*.routes.js", "./src/controllers/*.js"], // Add controllers! // Path to the API docs
+  apis: ["./src/*.routes.js", "./src/controllers/*.js"],
 };
 
 const swaggerDocs = swaggerJsdoc(swaggerOptions);
 // app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 app.get("/api-docs", (req, res) => {
-  res.send(swaggerUi.generateHTML(swaggerDocs));
+  res.send(`
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Swagger UI</title>
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/swagger-ui-dist@5.9.0/swagger-ui.css" />
+        <style>
+          html { box-sizing: border-box; overflow: -moz-scrollbars-vertical; overflow-y: scroll; }
+          *, *:before, *:after { box-sizing: inherit; }
+          body { margin: 0; background: #fafafa; }
+        </style>
+    </head>
+    <body>
+        <div id="swagger-ui"></div>
+        <script src="https://cdn.jsdelivr.net/npm/swagger-ui-dist@5.9.0/swagger-ui-bundle.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/swagger-ui-dist@5.9.0/swagger-ui-standalone-preset.js"></script>
+        <script>
+          window.onload = () => {
+            window.ui = SwaggerUIBundle({
+              url: '/api-docs.json',
+              dom_id: '#swagger-ui',
+              deepLinking: true,
+              presets: [
+                SwaggerUIBundle.presets.apis,
+                SwaggerUIStandalonePreset
+              ],
+              plugins: [
+                SwaggerUIBundle.plugins.DownloadUrl
+              ],
+              layout: "StandaloneLayout"
+            });
+          };
+        </script>
+    </body>
+    </html>
+  `);
 });
 app.get("/api-docs.json", (req, res) => {
   res.json(swaggerDocs);
-});
-
-app.get("/redoc", (req, res) => {
-  res.send(`
-    <!DOCTYPE html>
-    <html>
-      <head>
-        <title>Stuff API Docs</title>
-        <meta charset="utf-8"/>
-        <script src="https://cdn.redoc.ly/redoc/latest/bundles/redoc.standalone.js"></script>
-      </head>
-      <body>
-        <redoc spec-url="/api-docs.json"></redoc>
-      </body>
-    </html>
-  `);
 });
 
 // const limiter = rateLimit({
@@ -83,4 +107,5 @@ app.use("/v1/user", userRoutes);
 //   console.log(`Server is running on port ${PORT}`);
 // });
 
+// Export for vercel
 export default app;
