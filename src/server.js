@@ -41,6 +41,22 @@ app.get("/api-docs.json", (req, res) => {
   res.json(swaggerDocs);
 });
 
+app.get("/redoc", (req, res) => {
+  res.send(`
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <title>Stuff API Docs</title>
+        <meta charset="utf-8"/>
+        <script src="https://cdn.redoc.ly/redoc/latest/bundles/redoc.standalone.js"></script>
+      </head>
+      <body>
+        <redoc spec-url="/api-docs.json"></redoc>
+      </body>
+    </html>
+  `);
+});
+
 // const limiter = rateLimit({
 //   windowMs: 60 * 1000, // 1 minutes
 //   limit: 100, // Limit each IP to 100 requests per `window` (here, per 15 minutes).
