@@ -32,7 +32,14 @@ const swaggerOptions = {
 };
 
 const swaggerDocs = swaggerJsdoc(swaggerOptions);
-app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
+// app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
+
+app.get("/api-docs", (req, res) => {
+  res.send(swaggerUi.generateHTML(swaggerDocs));
+});
+app.get("/api-docs.json", (req, res) => {
+  res.json(swaggerDocs);
+});
 
 // const limiter = rateLimit({
 //   windowMs: 60 * 1000, // 1 minutes
@@ -50,6 +57,12 @@ app.use(cors());
 app.use("/v1", mainRoutes);
 app.use("/v1/user", userRoutes);
 
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-});
+if (process.env.NODE_ENV !== "production") {
+  app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
+  });
+}
+
+// app.listen(PORT, () => {
+//   console.log(`Server is running on port ${PORT}`);
+// });
